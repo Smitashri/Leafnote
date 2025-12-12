@@ -127,6 +127,12 @@ button.cta:active:not(:disabled) { transform: translateY(0); }
 
 button.cta:disabled { opacity:0.5; cursor:not-allowed }
 
+.btn-secondary {
+  background: linear-gradient(90deg,#b9d9b2,#8bbf99);
+  color: #0f1724;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
 .star-row { display:inline-flex; gap:6px; align-items:center }
 .star-button {
   background:transparent;
