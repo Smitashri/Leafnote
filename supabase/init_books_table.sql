@@ -7,6 +7,8 @@ create table if not exists public.books (
   id uuid default gen_random_uuid() primary key,
   user_id uuid not null,
   title text not null,
+  author text,
+  short_description text,
   rating int,
   status text not null, -- 'read' or 'to_read'
   date_read timestamptz,

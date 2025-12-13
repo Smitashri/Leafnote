@@ -8,4 +8,7 @@ if (!url || !anonKey) {
   console.warn('Supabase URL or ANON KEY missing. Supabase features will be disabled.');
 }
 
+export const supabaseConfigOk = Boolean(url && anonKey);
+export const supabaseConfig = { url: url || null, anonKey: anonKey || null };
+
 export const supabase = createClient(url || '', anonKey || '');
