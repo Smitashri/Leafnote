@@ -215,7 +215,9 @@ function App() {
 			if (error) {
 				// Provide clearer guidance for common invalid credentials / unconfirmed accounts
 				if (error?.code === 'invalid_credentials' || error?.status === 400) {
-					setAuthError('Invalid email or password. If you recently signed up, check your email to confirm your account. Use Forgot password to reset your password.');
+					setAuthError("Please click on sign-up as your email doesn't have an account with us.");
+					// Avoid showing raw backend responses to end users for this common case
+					setSignInDebug(null);
 				} else {
 					setAuthError(error.message || 'Sign-in error');
 				}
@@ -236,11 +238,24 @@ function App() {
 		try {
 			const { data, error } = await supabase.auth.resetPasswordForEmail(email);
 			console.log('leafnote: resetPassword response', { data, error });
-			if (error) setAuthError(error.message || 'Password reset error');
-			else setAuthMessage('Password reset email sent. If you do not receive it, ensure SMTP is configured in your Supabase project (Dashboard → Settings → Email).');
+			if (error) {
+				// Check for timeout/service errors
+				if (error?.code === 'request_timeout' || String(error.message).toLowerCase().includes('timeout') || String(error.message).toLowerCase().includes('504') || String(error.message).toLowerCase().includes('503')) {
+					setAuthError('Email service is temporarily unavailable. Please try again in a few moments.');
+				} else {
+					setAuthError(error.message || 'Password reset error');
+				}
+			} else {
+				setAuthMessage(`Password reset email sent. Check your inbox and spam folder. If you don't receive it, please try again.`);
+			}
 		} catch (err) {
 			console.error(err);
-			setAuthError('Failed to send password reset email.');
+			// Check if it's a timeout error
+			if (String(err.message).toLowerCase().includes('timeout') || String(err.message).toLowerCase().includes('fetch failed')) {
+				setAuthError('Email service is taking too long to respond. Please try again in a few moments.');
+			} else {
+				setAuthError('Failed to send password reset email. Please try again.');
+			}
 		}
 		// Start a cooldown to avoid rate-limit when users click repeatedly
 		setForgotCooldown(60);

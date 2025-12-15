@@ -5,6 +5,7 @@ export default function Login({ onSignIn, onSignUp, onForgotPassword, authMessag
   const bg = `${PUBLIC}/login%20page.jpg`;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const showSignInDebug = process.env.NODE_ENV !== 'production' && signInDebug && typeof signInDebug === 'object' && Object.keys(signInDebug).length > 0;
 
   return (
     <div style={{
@@ -53,7 +54,7 @@ export default function Login({ onSignIn, onSignUp, onForgotPassword, authMessag
           </div>
         ) : null}
 
-        {(signInDebug && typeof signInDebug === 'object' && Object.keys(signInDebug).length > 0) ? (
+        {showSignInDebug ? (
           <pre style={{ marginTop: 12, fontSize: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#fafafa', padding: 8, borderRadius: 8 }}>{JSON.stringify(signInDebug, null, 2)}</pre>
         ) : null}
 
