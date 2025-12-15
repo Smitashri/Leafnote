@@ -1,0 +1,25 @@
+name: Leafnote Weekly Report
+
+on:
+  # Run every Friday at 9:00 AM UTC
+  schedule:
+    - cron: '0 9 * * 5'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  send-weekly-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Call Weekly Report Edge Function
+        run: |
+          curl -X POST "${{ secrets.SUPABASE_FUNCTION_URL }}/weekly-report" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "x-report-secret: ${{ secrets.REPORT_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+        env:
+          SUPABASE_FUNCTION_URL: ${{ secrets.SUPABASE_FUNCTION_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REPORT_SECRET: ${{ secrets.REPORT_SECRET }}

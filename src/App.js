@@ -4,6 +4,7 @@ import logoSvg from './leafnote-logo.svg';
 import { supabase, supabaseConfigOk, supabaseConfig } from './supabaseClient';
 import Login from './Login';
 import Consent from './Consent';
+import { trackEvent } from './analytics';
 
 const STORAGE_KEY = 'booktracker_v1';
 
@@ -56,6 +57,9 @@ function App() {
 			setReadBooks([]);
 			setToReadBooks([]);
 		}
+
+		// Track app open
+		trackEvent('app_open');
 	}, []);
 
 	// persist local
@@ -181,12 +185,15 @@ function App() {
 						// likely requires email confirmation or invalid credentials
 						setAuthMessage('Account created. Please check your email to confirm your account before signing in.');
 						setSignInDebug({ method: 'signUp->signInAttempt', resp: signData, error: signErr });
+					trackEvent('signup_success');
 					} else {
 						setAuthMessage('Account created and signed in.');
 						if (signData?.session?.user) setUser(signData.session.user);
+					trackEvent('signup_success');
 					}
 				} catch (e) {
 					console.error('sign-in-after-signup failed', e);
+				trackEvent('signup_success');
 					setAuthMessage('Account created. Please sign in.');
 				}
 				// do not auto-sign-in; user should sign in with their credentials
@@ -215,6 +222,7 @@ function App() {
 			} else {
 				setAuthMessage('Signed in successfully');
 				if (data?.session?.user) setUser(data.session.user);
+				trackEvent('login_success');
 			}
 		} catch (err) {
 			console.error(err);
@@ -267,7 +275,17 @@ function App() {
 		if (!title || rating < 1) return;
 		(async () => {
 			const meta = await fetchBookMeta(title);
-			const newBook = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), title, rating, dateRead: new Date().toISOString(), author: meta.author || '', shortDescription: meta.shortDescription || '' };
+			const author = meta.author || '';
+
+			// Track click event
+			trackEvent('add_read_click', {
+				book_title: title,
+				book_author: author,
+				book_rating: rating,
+				book_status: 'read'
+			});
+
+			const newBook = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), title, rating, dateRead: new Date().toISOString(), author, shortDescription: meta.shortDescription || '' };
 			setReadBooks(prev => [newBook, ...prev]);
 			setReadTitle(''); setReadRating(0);
 
@@ -282,8 +300,17 @@ function App() {
 						if (insertErr) {
 							console.warn('Upsert with metadata failed, retrying without extra fields', insertErr.message);
 							const { error: insertErr2 } = await supabase.from('books').upsert({ id: newBook.id, user_id: uid, title: newBook.title, rating: newBook.rating, status: 'read', date_read: newBook.dateRead });
-							if (insertErr2) console.error(insertErr2);
+							if (insertErr2) {
+								console.error(insertErr2);
+							} else {
+								trackEvent('add_read_success', { book_title: title, book_author: author, book_rating: rating, book_status: 'read' });
+							}
+						} else {
+							trackEvent('add_read_success', { book_title: title, book_author: author, book_rating: rating, book_status: 'read' });
 						}
+					} else {
+						// Local-only add (not logged in)
+						trackEvent('add_read_success', { book_title: title, book_author: author, book_rating: rating, book_status: 'read' });
 					}
 				} catch (err) { console.error(err); }
 			})();
@@ -294,7 +321,16 @@ function App() {
 		const title = typeof titleArg === 'string' ? titleArg : toReadTitle.trim(); if (!title) return;
 		(async () => {
 			const meta = await fetchBookMeta(title);
-			const newBook = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), title, dateAdded: new Date().toISOString(), author: meta.author || '', shortDescription: meta.shortDescription || '' };
+			const author = meta.author || '';
+
+			// Track click event
+			trackEvent('add_toread_click', {
+				book_title: title,
+				book_author: author,
+				book_status: 'toread'
+			});
+
+			const newBook = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), title, dateAdded: new Date().toISOString(), author, shortDescription: meta.shortDescription || '' };
 			setToReadBooks(prev => [newBook, ...prev]);
 			setToReadTitle('');
 			(async () => {
@@ -307,8 +343,17 @@ function App() {
 						if (insertErr) {
 							console.warn('Upsert with metadata failed, retrying without extra fields', insertErr.message);
 							const { error: insertErr2 } = await supabase.from('books').upsert({ id: newBook.id, user_id: uid, title: newBook.title, status: 'to_read', date_added: newBook.dateAdded });
-							if (insertErr2) console.error(insertErr2);
+							if (insertErr2) {
+								console.error(insertErr2);
+							} else {
+								trackEvent('add_toread_success', { book_title: title, book_author: author, book_status: 'toread' });
+							}
+						} else {
+							trackEvent('add_toread_success', { book_title: title, book_author: author, book_status: 'toread' });
 						}
+					} else {
+						// Local-only add (not logged in)
+						trackEvent('add_toread_success', { book_title: title, book_author: author, book_status: 'toread' });
 					}
 				} catch (err) { console.error(err); }
 			})();
