@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b" />
+    </marker>
+    <style>
+      .box { fill:#fff; stroke:#2b2b2b; stroke-width:1.5; rx:8; }
+      .title { font: bold 16px sans-serif; fill:#111; }
+      .note { font: 12px sans-serif; fill:#333; }
+      .small { font: 11px sans-serif; fill:#444; }
+      .arrow { stroke:#2b2b2b; stroke-width:1.4; fill:none; marker-end:url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- Browser / Client -->
+  <g transform="translate(40,40)">
+    <rect x="0" y="0" width="340" height="220" class="box" />
+    <text x="18" y="28" class="title">Browser (React SPA)</text>
+    <text x="18" y="54" class="note">- Created with Create React App</text>
+    <text x="18" y="74" class="note">- Main logic: src/App.js, src/Login.js</text>
+    <text x="18" y="94" class="note">- UI: Add Read / To-Read / Feedback form</text>
+    <rect x="18" y="110" width="150" height="36" rx="6" fill="#f6f6ff" stroke="#bfbff6" />
+    <text x="28" y="133" class="small">localStorage</text>
+    <text x="28" y="148" class="small">(booktracker_v1, recos)</text>
+  </g>
+
+  <!-- Supabase -->
+  <g transform="translate(420,20)">
+    <rect x="0" y="0" width="300" height="120" class="box" />
+    <text x="18" y="26" class="title">Supabase (Auth & DB)</text>
+    <text x="18" y="52" class="note">- Auth: magic link & password</text>
+    <text x="18" y="72" class="note">- Table: books (sync/upsert)</text>
+    <text x="18" y="92" class="note">- Sync: fetchAndMerge(), upsert</text>
+  </g>
+
+  <!-- Google Books API -->
+  <g transform="translate(770,20)">
+    <rect x="0" y="0" width="340" height="120" class="box" />
+    <text x="18" y="26" class="title">Google Books API</text>
+    <text x="18" y="52" class="note">- Client-side fetch for recommendations</text>
+    <text x="18" y="72" class="note">- Filtering, short desc extraction</text>
+    <text x="18" y="92" class="note">- Cached to localStorage (recos)</text>
+  </g>
+
+  <!-- Formspree -->
+  <g transform="translate(420,160)">
+    <rect x="0" y="0" width="300" height="80" class="box" />
+    <text x="18" y="26" class="title">Formspree (Feedback)</text>
+    <text x="18" y="52" class="small">- Endpoint: formspree.io/f/xzznopad</text>
+  </g>
+
+  <!-- GitHub Pages / Deployment -->
+  <g transform="translate(40,300)">
+    <rect x="0" y="0" width="340" height="80" class="box" />
+    <text x="18" y="28" class="title">GitHub Pages</text>
+    <text x="18" y="50" class="small">- Build: CRA (npm run build)</text>
+    <text x="18" y="66" class="small">- Deploy: gh-pages</text>
+  </g>
+
+  <!-- Bitly -->
+  <g transform="translate(420,280)">
+    <rect x="0" y="0" width="300" height="60" class="box" />
+    <text x="18" y="24" class="title">Bitly redirect</text>
+    <text x="18" y="42" class="small">- Public short URL -> GitHub Pages</text>
+  </g>
+
+  <!-- Arrows -->
+  <!-- Browser -> Supabase (Auth, sync) -->
+  <path d="M380 140 L420 120" class="arrow" />
+  <path d="M380 150 L420 160" class="arrow" />
+  <text x="360" y="128" class="small">Auth / DB sync</text>
+
+  <!-- Browser -> Google Books -->
+  <path d="M380 90 L770 60" class="arrow" />
+  <text x="580" y="66" class="small">Recommendations fetch</text>
+
+  <!-- Browser -> Formspree -->
+  <path d="M560 220 L560 200 L560 180" class="arrow" />
+  <path d="M560 180 L560 200 L560 240" stroke="none" />
+  <path d="M380 200 L420 200" class="arrow" />
+  <text x="430" y="196" class="small">POST feedback</text>
+
+  <!-- Browser localStorage (inside browser box) already shown -->
+
+  <!-- GH Pages deployment arrow -->
+  <path d="M200 300 L200 280" class="arrow" />
+  <text x="80" y="300" class="small">Dev machine: build -> gh-pages</text>
+
+  <!-- Bitly -> GitHub Pages (external redirect) -->
+  <path d="M560 320 L200 340" class="arrow" />
+  <text x="380" y="320" class="small">Public short-link redirect</text>
+
+  <!-- Legend -->
+  <g transform="translate(760,360)">
+    <rect x="0" y="0" width="380" height="340" class="box" />
+    <text x="18" y="28" class="title">Legend & Notes</text>
+    <text x="18" y="54" class="small">- SPA stores primary state locally (localStorage)</text>
+    <text x="18" y="74" class="small">- Supabase is optional server sync + auth (upsert & fetch)</text>
+    <text x="18" y="94" class="small">- Google Books used for supplemental recos, cached client-side</text>
+    <text x="18" y="114" class="small">- Formspree forwards feedback to your email (no server required)</text>
+    <text x="18" y="134" class="small">- Env vars: REACT_APP_SUPABASE_REDIRECT_TO, REACT_APP_FEEDBACK_ENDPOINT</text>
+    <text x="18" y="154" class="small">- Deploys via gh-pages to GitHub Pages; public link via Bitly</text>
+    <text x="18" y="182" class="small">- Security: client-only code avoids storing SMTP creds in repo</text>
+    <text x="18" y="202" class="small">- Recommendation pipeline: deterministic rules + GB async + dedupe/interleave</text>
+    <text x="18" y="222" class="small">- Next improvements: persistent ordering, CI lint fixes, server webhooks</text>
+  </g>
+
+</svg>

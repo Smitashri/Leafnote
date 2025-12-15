@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/Leafnote/static/css/main.9f8b4d60.css",
+    "main.js": "/Leafnote/static/js/main.904f0834.js",
+    "static/js/453.6d876eee.chunk.js": "/Leafnote/static/js/453.6d876eee.chunk.js",
+    "index.html": "/Leafnote/index.html",
+    "static/media/leafnote-logo.svg": "/Leafnote/static/media/leafnote-logo.e952db649d2dc74a776ca4c52b4ecc0d.svg",
+    "main.9f8b4d60.css.map": "/Leafnote/static/css/main.9f8b4d60.css.map",
+    "main.904f0834.js.map": "/Leafnote/static/js/main.904f0834.js.map",
+    "453.6d876eee.chunk.js.map": "/Leafnote/static/js/453.6d876eee.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9f8b4d60.css",
+    "static/js/main.904f0834.js"
+  ]
+}
